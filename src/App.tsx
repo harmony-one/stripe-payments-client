@@ -1,25 +1,22 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route } from 'react-router-dom';
+import { Grommet, Box } from 'grommet';
+import {Root} from "./pages/Root";
+import {Success} from "./pages/Success";
+import {Cancel} from "./pages/Cancel";
+import {theme} from "./theme";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Grommet full theme={theme}>
+          <Box margin={'64px'}>
+              <Routes>
+                  <Route path={'/'} element={<Root />} />
+                  <Route path={'/success'} element={<Success />} />
+                  <Route path={'/cancel'} element={<Cancel />} />
+              </Routes>
+          </Box>
+      </Grommet>
   );
 }
 
