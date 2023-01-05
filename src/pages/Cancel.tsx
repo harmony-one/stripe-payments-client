@@ -1,7 +1,6 @@
 import React from 'react'
 import {Box, Text} from "grommet";
 import {Description} from "../components/Description";
-import config from "../config";
 
 export const Cancel = () => {
     return <Box>
