@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {Box, Button} from "grommet";
+import {Box} from "grommet";
 import { loadStripe   } from '@stripe/stripe-js'
 import {Elements} from '@stripe/react-stripe-js';
 import config from '../config'

@@ -7,7 +7,7 @@ export const Success = () => {
     return <Box>
         <Box direction={'row'} align={'center'} gap={'32px'}>
             <Text color={'green'}>Payment status: Success</Text>
-            <Description text={`Payment was successful. Backend will receive Stripe webhook event and send transactions to 1.country contract.`} />
+            <Description text={`Payment was successful. Backend should receive "payment_intent.succeeded" event from Stripe.`} />
         </Box>
         <Box direction={'row'} align={'center'} gap={'32px'}>
                 <Link to={'/'}>

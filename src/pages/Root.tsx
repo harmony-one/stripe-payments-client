@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import {Box, Button, Select} from "grommet";
 import {Description} from "../components/Description";
 import config from '../config'
-import { Link } from 'react-router-dom';
 
 export const Root = () => {
     const [paymentMode, setPaymentMode] = useState<'payment' | 'subscription'>('payment')
