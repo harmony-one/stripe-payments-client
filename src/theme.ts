@@ -5,6 +5,11 @@ export const theme = {
             size: "18px",
             height: "20px",
         },
+        focus: {
+            border: {
+                color: "transparent",
+            },
+        },
     },
     button: {
         primary: {
