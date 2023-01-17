@@ -6,12 +6,10 @@ import {Success} from "./pages/Success";
 import {Cancel} from "./pages/Cancel";
 import {theme} from "./theme";
 import { Checkout } from './pages/Checkout';
-import AppHeader from './components/AppHeader';
 
 function App() {
   return (
       <Grommet full theme={theme}>
-          <AppHeader />
           <Box margin={'64px'}>
               <Routes>
                   <Route path={'/'} element={<Root />} />
