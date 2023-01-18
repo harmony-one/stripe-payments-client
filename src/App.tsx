@@ -5,7 +5,6 @@ import {Root} from "./pages/Root";
 import {Success} from "./pages/Success";
 import {Cancel} from "./pages/Cancel";
 import {theme} from "./theme";
-import { Checkout } from './pages/Checkout';
 
 function App() {
   return (
@@ -15,7 +14,6 @@ function App() {
                   <Route path={'/'} element={<Root />} />
                   <Route path={'/success'} element={<Success />} />
                   <Route path={'/cancel'} element={<Cancel />} />
-                  <Route path={'/checkout'} element={<Checkout />} />
               </Routes>
           </Box>
       </Grommet>

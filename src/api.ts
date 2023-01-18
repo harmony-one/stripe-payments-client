@@ -6,7 +6,10 @@ const api = axios.create({
     headers: { "Content-Type": "application/json" },
 });
 
-export const createPaymentIntent = async (): Promise<string> => {
-    const { data } = await api.post('/stripe/create-payment-intent')
+export const createPaymentIntent = async (paymentMethodType = 'card', currency = 'usd'): Promise<string> => {
+    const { data } = await api.post('/stripe/create-payment-intent', {
+        paymentMethodType,
+        currency
+    })
     return data.clientSecret
 }
