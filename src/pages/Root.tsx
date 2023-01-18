@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
-import {Box, Button, Select} from "grommet";
-import {Description} from "../components/Description";
+import React from 'react'
+import {Box} from "grommet";
 import config from '../config'
 import { ApplePay } from '../components/ApplePay';
 import { Elements } from '@stripe/react-stripe-js';

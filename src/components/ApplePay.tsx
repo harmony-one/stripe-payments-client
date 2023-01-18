@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Text } from 'grommet'
-import { loadStripe } from '@stripe/stripe-js'
-import {Elements} from '@stripe/react-stripe-js';
+import { Box } from 'grommet'
 import { useStripe, useElements, PaymentRequestButtonElement } from '@stripe/react-stripe-js'
 import { createPaymentIntent } from '../api';
 import StatusMessages, { useMessages } from './StatusMessages';
@@ -66,12 +64,12 @@ export const ApplePay = () => {
 
             e.complete('success')
 
-            if(paymentIntent.status == 'requires_action') {
+            if(paymentIntent.status === 'requires_action') {
                 stripe.confirmCardPayment(clientSecret)
             }
             addMessage(`Payment ${paymentIntent.status}: ${paymentIntent.id}`);
         })
-    }, [stripe, elements])
+    }, [stripe, elements, addMessage])
 
     return <Box>
         <Box width={'200px'} margin={{ top: '32px' }}>
