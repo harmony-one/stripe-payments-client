@@ -14,7 +14,7 @@ export const Root = () => {
     return <Box>
         <Elements stripe={stripePromise}>
             <Box direction={'column'} gap={'32px'}>
-                {/*<ApplePay />*/}
+                <ApplePay />
                 <WalletConnect projectId={walletConnect.projectId} />
             </Box>
         </Elements>

@@ -6,29 +6,29 @@ import Web3 from 'web3'
 import { ethereumClient } from '../utils'
 
 export const WalletConnect = (props: { projectId: string }) => {
-  const { isConnected, address } = useAccount()
+  const { isConnected, address, connector } = useAccount()
+  const [isConfirming, setIsConfirming] = useState(false)
   const [txHash, setTxHash] = useState('')
 
   const onSendClicked = async () => {
     try {
-      const web3 = new Web3('https://api.harmony.one')
+      const provider = await connector!.getProvider()
+      const web3 = new Web3(provider)
       const amount = web3.utils.toWei('10', 'ether');
       const transactionParameters = {
-        nonce: '0x00',
         gas: web3.utils.toHex(21000),
         gasPrice: web3.utils.toHex(1000 * 1000 * 1000 * 1000),
-        to: '0x0000000000000000000000000000000000000000',
+        to: '0x95D02e967Dd2D2B1839347e0B84E59136b11A073',
         from: address,
         value: web3.utils.toHex(amount),
-        chainId: window.ethereum.networkVersion
       };
-      const hash = await window.ethereum.request({
-        method: 'eth_sendTransaction',
-        params: [transactionParameters],
-      });
-      setTxHash(hash)
+      setIsConfirming(true)
+      const tx = await web3.eth.sendTransaction(transactionParameters)
+      setTxHash(tx.transactionHash)
     } catch (e) {
       console.log('Cannot send tx:', e)
+    } finally {
+      setIsConfirming(false)
     }
   }
 
@@ -42,14 +42,14 @@ export const WalletConnect = (props: { projectId: string }) => {
       <Box>
         {(isConnected && address) &&
             <Box>
-                <Box width={'160px'}>
-                    <Button primary onClick={onSendClicked}>
-                        Pay (10 ONE)
+                <Box width={'280px'}>
+                    <Button primary disabled={isConfirming} onClick={onSendClicked}>
+                      {isConfirming ? 'Confirming transaction...' : 'Subscribe (10 ONE)'}
                     </Button>
                 </Box>
               {txHash &&
                 <Box margin={{top: 'medium'}}>
-                    <Text><a href={`https://explorer.harmony.one/tx/${txHash}`} target={'_blank'}>Check tx on Explorer</a></Text>
+                    <Text><a href={`https://explorer.harmony.one/tx/${txHash}`} target={'_blank'}>Show tx on Explorer</a></Text>
                 </Box>
               }
             </Box>
