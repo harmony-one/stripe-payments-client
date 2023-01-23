@@ -1,6 +1,5 @@
 import React from 'react'
 import {Box} from "grommet";
-import { Web3Button } from '@web3modal/react'
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import config from '../config'
@@ -14,7 +13,7 @@ export const Root = () => {
 
     return <Box>
         <Elements stripe={stripePromise}>
-            <Box direction={'row'} gap={'32px'}>
+            <Box direction={'column'} gap={'32px'}>
                 {/*<ApplePay />*/}
                 <WalletConnect projectId={walletConnect.projectId} />
             </Box>

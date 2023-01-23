@@ -1,13 +1,13 @@
 import { Web3Button, Web3Modal } from '@web3modal/react'
-import { Box, Button } from 'grommet'
-import React from 'react'
+import { Box, Button, Text } from 'grommet'
+import React, { useState } from 'react'
 import { useAccount } from 'wagmi'
 import Web3 from 'web3'
 import { ethereumClient } from '../utils'
 
 export const WalletConnect = (props: { projectId: string }) => {
-  const { isConnected, address, connector } = useAccount()
-  console.log('connector', connector)
+  const { isConnected, address } = useAccount()
+  const [txHash, setTxHash] = useState('')
 
   const onSendClicked = async () => {
     try {
@@ -22,11 +22,11 @@ export const WalletConnect = (props: { projectId: string }) => {
         value: web3.utils.toHex(amount),
         chainId: window.ethereum.networkVersion
       };
-      const txHash = await window.ethereum.request({
+      const hash = await window.ethereum.request({
         method: 'eth_sendTransaction',
         params: [transactionParameters],
       });
-      console.log('Tx hash:', txHash)
+      setTxHash(hash)
     } catch (e) {
       console.log('Cannot send tx:', e)
     }
@@ -34,15 +34,24 @@ export const WalletConnect = (props: { projectId: string }) => {
 
   return <Box>
     <Box direction={'row'} gap={'8px'}>
-      <Box>
-        <Web3Button label="Connect Wallet" />
-      </Box>
+      {!isConnected &&
+          <Box>
+              <Web3Button label="Connect Wallet" />
+          </Box>
+      }
       <Box>
         {(isConnected && address) &&
             <Box>
-                <Button primary onClick={onSendClicked}>
-                    Send 10 ONE
-                </Button>
+                <Box width={'160px'}>
+                    <Button primary onClick={onSendClicked}>
+                        Pay (10 ONE)
+                    </Button>
+                </Box>
+              {txHash &&
+                <Box margin={{top: 'medium'}}>
+                    <Text><a href={`https://explorer.harmony.one/tx/${txHash}`} target={'_blank'}>Check tx on Explorer</a></Text>
+                </Box>
+              }
             </Box>
         }
       </Box>
