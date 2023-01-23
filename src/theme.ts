@@ -10,6 +10,9 @@ export const theme = {
         primary: {
             extend: () => `
             padding: 8px 24px;
+            border-radius: 6px;
+            background-color: black;
+            text-align: center;
           `
         }
     }

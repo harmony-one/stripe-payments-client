@@ -15,16 +15,6 @@ export const ApplePay = () => {
             return
         }
 
-        // const testClientSecretLoad = async () => {
-        //     try {
-        //         const clientSecret = await createPaymentIntent('card', 'usd')
-        //         console.log('clientSecret:', clientSecret)
-        //     } catch (e) {
-        //         console.log('Test load error')
-        //     }
-        // }
-        // testClientSecretLoad()
-
         const pr = stripe.paymentRequest({
             currency: 'usd',
             country: 'US',
