@@ -42,9 +42,9 @@ export const WalletConnect = (props: { projectId: string }) => {
       <Box>
         {(isConnected && address) &&
             <Box>
-                <Box width={'280px'}>
+                <Box width={'200px'}>
                     <Button primary disabled={isConfirming} onClick={onSendClicked}>
-                      {isConfirming ? 'Confirming transaction...' : 'Subscribe (10 ONE)'}
+                      {isConfirming ? 'Confirming...' : 'Pay (10 ONE)'}
                     </Button>
                 </Box>
               {txHash &&
