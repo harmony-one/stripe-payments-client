@@ -1,22 +1,15 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import {Box, Button, Text} from "grommet";
 import {Description} from "../components/Description";
 import { Link } from 'react-router-dom';
-import { observer } from 'mobx-react';
-import { useStores } from '../hooks/useStores';
 
-export const Success = observer(() => {
-    const { accountStore } = useStores()
-
-    useEffect(() => {
-        accountStore.setIsSubscribed(true)
-    }, [])
-
+export const Success = () => {
     return <Box>
         <Box direction={'row'} align={'center'} gap={'32px'}>
-            <Text color={'green'}>Payment status: success. Now you have access to app content.</Text>
+            <Text color={'green'}>Payment status: Success</Text>
+            <Description text={`Payment was successful. Backend should receive "payment_intent.succeeded" event from Stripe.`} />
         </Box>
-        <Box direction={'row'} align={'center'} gap={'32px'} margin={{ top: '32px' }}>
+        <Box direction={'row'} align={'center'} gap={'32px'}>
                 <Link to={'/'}>
                     <Button primary size={'large'}>
                         Back to main page
@@ -24,4 +17,4 @@ export const Success = observer(() => {
                 </Link>
         </Box>
     </Box>
-})
+}
