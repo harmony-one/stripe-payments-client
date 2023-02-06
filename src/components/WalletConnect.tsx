@@ -23,7 +23,7 @@ const wcConnector = new WalletConnect({
 });
 
 const ConnectorItem = (props: any) => {
-  const { isLoading, connector, pendingConnector, connect, walletConnectURI, updateURI } = props
+  const { isLoading, connector, pendingConnector, connect, walletConnectURI } = props
   const name = ConnectorNameMap[connector.name] || connector.name
 
   let content = <Button
@@ -44,14 +44,14 @@ const ConnectorItem = (props: any) => {
       <MetamaskLogo onClick={() => connect({ connector })} style={{ cursor: 'pointer' }} />
     </Box>
   }
-  // else if (connector.id === 'walletConnect_qr') {
-  //   content = <Box align={'center'} justify={'center'} onClick={updateURI}>
-  //     <QRCode
-  //       size={96}
-  //       value={walletConnectURI}
-  //     />
-  //   </Box>
-  // }
+  else if (connector.id === 'walletConnect_qr' && walletConnectURI) {
+    content = <Box align={'center'} justify={'center'}>
+      <QRCode
+        size={96}
+        value={walletConnectURI}
+      />
+    </Box>
+  }
 
   return <Box gap={'16px'}>
     <Box align={'center'}>
@@ -70,7 +70,9 @@ export const WalletConnecPage = (props: { projectId: string }) => {
   const { disconnect } = useDisconnect()
 
   const [walletConnectURI, setWalletConnectURI] = useState('')
+  const [walletConnectAddress, setWalletConnectAddress] = useState('')
   const [isPageReady, setPageReady] = useState(false)
+  const [isWcConnected, setWcConnected] = useState(false)
   const [isConfirming, setIsConfirming] = useState(false)
   const [txHash, setTxHash] = useState('')
 
@@ -87,31 +89,46 @@ export const WalletConnecPage = (props: { projectId: string }) => {
     }
   }
 
-  useEffect(() => {
-    wcConnector.on("connect", (error, payload) => {
-      if (error) {
-        return
-      }
-      const { accounts, chainId } = payload.params[0];
-    });
-  }, [])
+  const onWalletConnectEvent = (error: any, payload: any) => {
+    const { accounts, chainId } = payload.params[0];
+
+    if(accounts.length > 0) {
+      setWalletConnectAddress(accounts[0])
+      console.log('Set wallet connect success: ', accounts[0])
+    }
+    setWcConnected(true)
+  }
+
+  const onWalletDisconnect = () => {
+    setWcConnected(false)
+  }
 
   useEffect(() => {
-    // createWalletConnectUri()
+    createWalletConnectUri()
     setTimeout(() => setPageReady(true), 1000)
+    wcConnector.on("connect", onWalletConnectEvent.bind(this));
+    wcConnector.on("disconnect", onWalletDisconnect.bind(this));
   }, [])
 
   useEffect(() => {
     // Don't show transaction popup on page load, only on connect provider
     if(isConnected && isPageReady) {
-      setTimeout(() => { // timeout for QR code connector
-        sendTransaction()
-      }, 200)
+      // setTimeout(() => { // timeout for QR code connector
+      //   sendTransaction()
+      // }, 200)
     }
     if(!isConnected) {
       setTxHash('')
     }
   }, [isConnected])
+
+  const sendTxHandler = () => {
+    if(isWcConnected) {
+      sendWalletConnectTransaction()
+    } else {
+      sendTransaction()
+    }
+  }
 
   const sendTransaction = async () => {
     try {
@@ -127,6 +144,29 @@ export const WalletConnecPage = (props: { projectId: string }) => {
       };
       setIsConfirming(true)
       const tx = await web3.eth.sendTransaction(transactionParameters)
+      setTxHash(tx.transactionHash)
+    } catch (e) {
+      console.log('Cannot send tx:', e)
+    } finally {
+      setIsConfirming(false)
+    }
+  }
+
+  const sendWalletConnectTransaction = async () => {
+    try {
+      const web3 = new Web3('https://api.harmony.one')
+      const amount = web3.utils.toWei(payAmountOne.toString(), 'ether');
+      const transactionParameters = {
+        to: receiverAddress,
+        from: walletConnectAddress,
+        data: "0x",
+        gasLimit: web3.utils.toHex(21000),
+        gasPrice: web3.utils.toHex(1000 * 1000 * 1000 * 1000),
+        value: web3.utils.toHex(amount),
+      };
+      setIsConfirming(true)
+      const tx = await wcConnector.sendTransaction(transactionParameters)
+      console.log('tx:', tx)
       setTxHash(tx.transactionHash)
     } catch (e) {
       console.log('Cannot send tx:', e)
@@ -171,18 +211,13 @@ export const WalletConnecPage = (props: { projectId: string }) => {
                         <Web3Button label="Connect Wallet" />
                     </Box>
                 </Box>
-                {/*{isConnected &&*/}
-                {/*    <Box margin={{ left: '64px' }}>*/}
-                {/*        <Text onClick={() => disconnect()} style={{ textDecoration: 'underline', color: 'gray', cursor: 'pointer' }}>Disconnect</Text>*/}
-                {/*    </Box>*/}
-                {/*}*/}
               </Box>
           </Box>
       </Box>
     </Box>
-    {isConnected && <Box gap={'32px'} margin={{ top: '32px' }}>
+    {(isConnected || isWcConnected) && <Box gap={'32px'} margin={{ top: '32px' }}>
         <Box width={'200px'}>
-            <Button primary disabled={isConfirming} onClick={sendTransaction}>
+            <Button primary disabled={isConfirming} onClick={sendTxHandler}>
               {isConfirming ? 'Confirming tx...' : `Pay (${payAmountOne} ONE)`}
             </Button>
         </Box>
@@ -192,6 +227,16 @@ export const WalletConnecPage = (props: { projectId: string }) => {
             </Box>
         }
     </Box>}
+    {(isConnected || isWcConnected) &&
+        <Box margin={{ top: '32px' }}>
+            <Text onClick={async () => {
+              disconnect()
+              if(isWcConnected) {
+                await wcConnector.killSession({ message: 'close session' })
+              }
+            }} style={{ textDecoration: 'underline', color: 'lightgrey', cursor: 'pointer' }}>Disconnect</Text>
+        </Box>
+    }
     <Web3Modal projectId={props.projectId} ethereumClient={ethereumClient} />
   </Box>
 }
