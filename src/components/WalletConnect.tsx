@@ -43,14 +43,15 @@ const ConnectorItem = (props: any) => {
     content = <Box align={'center'} justify={'center'}>
       <MetamaskLogo onClick={() => connect({ connector })} style={{ cursor: 'pointer' }} />
     </Box>
-  } else if (connector.id === 'walletConnect_qr') {
-    content = <Box align={'center'} justify={'center'} onClick={updateURI}>
-      <QRCode
-        size={96}
-        value={walletConnectURI}
-      />
-    </Box>
   }
+  // else if (connector.id === 'walletConnect_qr') {
+  //   content = <Box align={'center'} justify={'center'} onClick={updateURI}>
+  //     <QRCode
+  //       size={96}
+  //       value={walletConnectURI}
+  //     />
+  //   </Box>
+  // }
 
   return <Box gap={'16px'}>
     <Box align={'center'}>
@@ -75,8 +76,11 @@ export const WalletConnecPage = (props: { projectId: string }) => {
 
   const createWalletConnectUri = async () => {
     try {
+      if(wcConnector.session.key) {
+        await wcConnector.killSession({ message: 'close session' })
+      }
       await wcConnector.createSession()
-      console.log('Wallet connect uri:', wcConnector.uri)
+      // console.log('Wallet connect uri:', wcConnector.uri)
       setWalletConnectURI(wcConnector.uri)
     } catch (e) {
       console.error('Cannot create Wallet connect URI', (e as Error).message)
@@ -84,7 +88,16 @@ export const WalletConnecPage = (props: { projectId: string }) => {
   }
 
   useEffect(() => {
-    createWalletConnectUri()
+    wcConnector.on("connect", (error, payload) => {
+      if (error) {
+        return
+      }
+      const { accounts, chainId } = payload.params[0];
+    });
+  }, [])
+
+  useEffect(() => {
+    // createWalletConnectUri()
     setTimeout(() => setPageReady(true), 1000)
   }, [])
 
@@ -147,7 +160,6 @@ export const WalletConnecPage = (props: { projectId: string }) => {
                     pendingConnector,
                     connect,
                     walletConnectURI,
-
                   }
                   return <ConnectorItem key={connector.id + index} {...itemsProps} />
                 })}
