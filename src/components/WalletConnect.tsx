@@ -186,7 +186,7 @@ export const WalletConnecPage = (props: { projectId: string }) => {
                           {/*@ts-ignore*/}
                           {typeof window.safari !== 'undefined' ? 'Apple pay' : 'Google Pay'}
                         </Box>
-                        <Box>
+                        <Box margin={{ top: '16px' }}>
                             <ApplePay />
                         </Box>
                     </Box>
