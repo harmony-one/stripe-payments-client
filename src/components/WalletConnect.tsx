@@ -55,18 +55,22 @@ export const WalletConnect = (props: { projectId: string }) => {
     useConnect()
   const { disconnect } = useDisconnect()
 
+  const [isPageReady, setPageReady] = useState(false)
   const [isConfirming, setIsConfirming] = useState(false)
   const [txHash, setTxHash] = useState('')
 
   useEffect(() => {
-    if(connector && isConnected) {
-      console.log('Wallet connected:', connector.id)
+    setTimeout(() => setPageReady(true), 1000)
+  }, [])
+
+  useEffect(() => {
+    if(isConnected && isPageReady) {
       sendTransaction()
     }
     if(!isConnected) {
       setTxHash('')
     }
-  }, [connector, isConnected])
+  }, [isConnected])
 
   const sendTransaction = async () => {
     try {

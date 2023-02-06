@@ -16,7 +16,6 @@ const { provider } = configureChains(chains, [
 ]);
 
 const web3ModalConnectors = modalConnectors({ appName: "web3Modal", chains })
-console.log('web3ModalConnectors', web3ModalConnectors)
 
 const wc = new WalletConnectConnector({
     chains,
@@ -25,13 +24,13 @@ const wc = new WalletConnectConnector({
     },
   })
 // @ts-ignore
-wc.id = 'walletConnect_qr'
+wc.id = 'walletConnect_qr' // Hack to fix conflicting Wallet Connect instances
 
 const connectors = [
   // new MetaMaskConnector({ chains }),
   wc,
   ...web3ModalConnectors
-    .filter((connector) => ['walletConnect', 'injected'].includes(connector.id)) // , 'walletConnect', 'injected',
+    .filter((connector) => ['walletConnect', 'injected'].includes(connector.id))
 ]
 
 export const wagmiClient = createClient({
