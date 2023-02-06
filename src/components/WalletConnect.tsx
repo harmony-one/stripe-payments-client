@@ -175,6 +175,10 @@ export const WalletConnecPage = (props: { projectId: string }) => {
     }
   }
 
+  // @ts-ignore
+  const isSafari = typeof window.safari !== 'undefined'
+  const isIOSSafari = !!window.navigator.userAgent.match(/Version\/[\d\.]+.*Safari/);
+
   return <Box>
     <Box direction={'row'} gap={'8px'}>
       <Box>
@@ -184,7 +188,7 @@ export const WalletConnecPage = (props: { projectId: string }) => {
                     <Box gap={'16px'}>
                         <Box align={'center'}>
                           {/*@ts-ignore*/}
-                          {typeof window.safari !== 'undefined' ? 'Apple pay' : 'Google Pay'}
+                          {(isSafari || isIOSSafari) ? 'Apple pay' : 'Google Pay'}
                         </Box>
                         <Box margin={{ top: '16px' }}>
                             <ApplePay />
