@@ -62,6 +62,9 @@ export const WalletConnect = (props: { projectId: string }) => {
       console.log('Wallet connected:', connector.id)
       sendTransaction()
     }
+    if(!isConnected) {
+      setTxHash('')
+    }
   }, [connector, isConnected])
 
   const sendTransaction = async () => {
@@ -127,20 +130,20 @@ export const WalletConnect = (props: { projectId: string }) => {
                     </Box>
                 }
               </Box>
-            {txHash &&
-              <Box margin={{top: 'medium'}}>
-                  <Text><a href={`https://explorer.harmony.one/tx/${txHash}`} target={'_blank'}>Show transaction in Explorer</a></Text>
-              </Box>
-            }
           </Box>
       </Box>
     </Box>
-    {isConnected && <Box direction={'row'} gap={'32px'} margin={{ top: '32px' }}>
+    {isConnected && <Box gap={'32px'} margin={{ top: '32px' }}>
         <Box width={'200px'}>
             <Button primary disabled={isConfirming} onClick={sendTransaction}>
               {isConfirming ? 'Confirming tx...' : `Pay (${payAmountOne} ONE)`}
             </Button>
         </Box>
+        {txHash &&
+            <Box>
+                <Text><a href={`https://explorer.harmony.one/tx/${txHash}`} target={'_blank'}>Show transaction in Explorer</a></Text>
+            </Box>
+        }
     </Box>}
     <Web3Modal projectId={props.projectId} ethereumClient={ethereumClient} />
   </Box>
