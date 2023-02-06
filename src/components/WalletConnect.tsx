@@ -185,12 +185,12 @@ export const WalletConnecPage = (props: { projectId: string }) => {
           <Box>
               <Box direction={'row'} gap={'32px'} wrap={true}>
                 {window.location.href.includes('https://') &&
-                    <Box gap={'16px'}>
+                    <Box gap={'16px'} margin={{ top: '16px' }}>
                         <Box align={'center'}>
                           {/*@ts-ignore*/}
                           {(isSafari || isIOSSafari) ? 'Apple pay' : 'Google Pay'}
                         </Box>
-                        <Box margin={{ top: '16px' }}>
+                        <Box>
                             <ApplePay />
                         </Box>
                     </Box>
