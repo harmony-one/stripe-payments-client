@@ -41,7 +41,7 @@ const ConnectorItem = (props: any) => {
 
   return <Box gap={'16px'}>
     <Box align={'center'}>
-      {name}
+      {name}{!connector.ready && ' (unsupported)'}
     </Box>
     <Box>
       {content}
