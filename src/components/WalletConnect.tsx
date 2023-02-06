@@ -11,6 +11,7 @@ const payAmountOne = 50
 const receiverAddress = '0xac29041489210563f02f95ad85Df2e033131aE77'
 
 const ConnectorNameMap: Record<string, string> = {
+  Injected: 'Metamask',
   Metamask: 'Metamask',
   WalletConnect: 'QR Code'
 }
