@@ -124,11 +124,11 @@ export const WalletConnect = (props: { projectId: string }) => {
                         <Web3Button label="Connect Wallet" />
                     </Box>
                 </Box>
-                {isConnected &&
-                    <Box margin={{ left: '64px' }}>
-                        <Text onClick={() => disconnect()} style={{ textDecoration: 'underline', color: 'gray', cursor: 'pointer' }}>Disconnect</Text>
-                    </Box>
-                }
+                {/*{isConnected &&*/}
+                {/*    <Box margin={{ left: '64px' }}>*/}
+                {/*        <Text onClick={() => disconnect()} style={{ textDecoration: 'underline', color: 'gray', cursor: 'pointer' }}>Disconnect</Text>*/}
+                {/*    </Box>*/}
+                {/*}*/}
               </Box>
           </Box>
       </Box>
