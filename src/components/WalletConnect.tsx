@@ -1,8 +1,10 @@
 import { Web3Button, Web3Modal } from '@web3modal/react'
 import { Box, Button, Text } from 'grommet'
 import React, { useState, useEffect } from 'react'
+import QRCode from "react-qr-code";
 import { useAccount, useConnect, useDisconnect, Connector } from 'wagmi'
 import Web3 from 'web3'
+import WalletConnect from "@walletconnect/browser";
 import { ethereumClient } from '../utils'
 import { ApplePay } from './ApplePay'
 import {ReactComponent as MetamaskLogo} from '../assets/metamask-fox.svg';
@@ -16,8 +18,12 @@ const ConnectorNameMap: Record<string, string> = {
   WalletConnect: 'QR Code'
 }
 
+const wcConnector = new WalletConnect({
+  bridge: "https://bridge.walletconnect.org",
+});
+
 const ConnectorItem = (props: any) => {
-  const { isLoading, connector, pendingConnector, connect } = props
+  const { isLoading, connector, pendingConnector, connect, walletConnectURI, updateURI } = props
   const name = ConnectorNameMap[connector.name] || connector.name
 
   let content = <Button
@@ -37,6 +43,13 @@ const ConnectorItem = (props: any) => {
     content = <Box align={'center'} justify={'center'}>
       <MetamaskLogo onClick={() => connect({ connector })} style={{ cursor: 'pointer' }} />
     </Box>
+  } else if (connector.id === 'walletConnect_qr') {
+    content = <Box align={'center'} justify={'center'} onClick={updateURI}>
+      <QRCode
+        size={96}
+        value={walletConnectURI}
+      />
+    </Box>
   }
 
   return <Box gap={'16px'}>
@@ -49,17 +62,29 @@ const ConnectorItem = (props: any) => {
   </Box>
 }
 
-export const WalletConnect = (props: { projectId: string }) => {
+export const WalletConnecPage = (props: { projectId: string }) => {
   const { isConnected, address, connector } = useAccount()
   const { connect, connectors, error, isLoading, pendingConnector } =
     useConnect()
   const { disconnect } = useDisconnect()
 
+  const [walletConnectURI, setWalletConnectURI] = useState('')
   const [isPageReady, setPageReady] = useState(false)
   const [isConfirming, setIsConfirming] = useState(false)
   const [txHash, setTxHash] = useState('')
 
+  const createWalletConnectUri = async () => {
+    try {
+      await wcConnector.createSession()
+      console.log('Wallet connect uri:', wcConnector.uri)
+      setWalletConnectURI(wcConnector.uri)
+    } catch (e) {
+      console.error('Cannot create Wallet connect URI', (e as Error).message)
+    }
+  }
+
   useEffect(() => {
+    createWalletConnectUri()
     setTimeout(() => setPageReady(true), 1000)
   }, [])
 
@@ -68,7 +93,7 @@ export const WalletConnect = (props: { projectId: string }) => {
     if(isConnected && isPageReady) {
       setTimeout(() => { // timeout for QR code connector
         sendTransaction()
-      }, 500)
+      }, 200)
     }
     if(!isConnected) {
       setTxHash('')
@@ -120,7 +145,9 @@ export const WalletConnect = (props: { projectId: string }) => {
                     isLoading,
                     connector,
                     pendingConnector,
-                    connect
+                    connect,
+                    walletConnectURI,
+
                   }
                   return <ConnectorItem key={connector.id + index} {...itemsProps} />
                 })}
