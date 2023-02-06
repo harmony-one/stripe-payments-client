@@ -53,7 +53,7 @@ const ConnectorItem = (props: any) => {
     </Box>
   }
 
-  return <Box gap={'16px'}>
+  return <Box width={'120px'} gap={'16px'} margin={{ top: '16px' }}>
     <Box align={'center'}>
       {name}{!connector.ready && ' (unsupported)'}
     </Box>
@@ -179,7 +179,7 @@ export const WalletConnecPage = (props: { projectId: string }) => {
     <Box direction={'row'} gap={'8px'}>
       <Box>
           <Box>
-              <Box direction={'row'} gap={'32px'}>
+              <Box direction={'row'} gap={'32px'} wrap={true}>
                 {window.location.href.includes('https://') &&
                     <Box gap={'16px'}>
                         <Box align={'center'}>
@@ -203,7 +203,7 @@ export const WalletConnecPage = (props: { projectId: string }) => {
                   }
                   return <ConnectorItem key={connector.id + index} {...itemsProps} />
                 })}
-                <Box gap={'16px'}>
+                <Box gap={'16px'} margin={{ top: '16px' }}>
                     <Box align={'center'}>
                         Connect Wallet
                     </Box>
