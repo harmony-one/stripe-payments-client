@@ -64,8 +64,11 @@ export const WalletConnect = (props: { projectId: string }) => {
   }, [])
 
   useEffect(() => {
+    // Don't show transaction popup on page load, only on connect provider
     if(isConnected && isPageReady) {
-      sendTransaction()
+      setTimeout(() => { // timeout for QR code connector
+        sendTransaction()
+      }, 500)
     }
     if(!isConnected) {
       setTxHash('')
