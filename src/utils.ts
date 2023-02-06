@@ -1,6 +1,8 @@
 import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import config from './config'
 
 const { walletConnect: { projectId }, chainParams } = config
@@ -14,10 +16,28 @@ const { provider } = configureChains(chains, [
 ]);
 
 const web3ModalConnectors = modalConnectors({ appName: "web3Modal", chains })
+console.log('web3ModalConnectors', web3ModalConnectors)
+
+const wc = new WalletConnectConnector({
+    chains,
+    options: {
+      qrcode: true,
+    },
+  })
+// @ts-ignore
+wc.id = 'walletConnect_qr'
+
+const connectors = [
+  // new MetaMaskConnector({ chains }),
+  wc,
+  ...web3ModalConnectors
+    .filter((connector) => ['walletConnect', 'injected'].includes(connector.id)) // , 'walletConnect', 'injected',
+]
 
 export const wagmiClient = createClient({
   autoConnect: true,
-  connectors: web3ModalConnectors,
+  // connectors: web3ModalConnectors,
+  connectors,
   provider,
 });
 

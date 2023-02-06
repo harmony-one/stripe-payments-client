@@ -61,14 +61,11 @@ export const ApplePay = () => {
         })
     }, [stripe, elements, addMessage])
 
-    return <Box>
-        <Box width={'200px'} margin={{ top: '32px' }}>
-            {paymentRequest &&
-                <PaymentRequestButtonElement options={{ paymentRequest }} />
-            }
-        </Box>
-        <Box margin={{ top: '32px' }}>
-            <StatusMessages messages={messages} />
-        </Box>
+    if(!paymentRequest) {
+        return null
+    }
+
+    return <Box width={'120px'}>
+        <PaymentRequestButtonElement options={{ paymentRequest }} />
     </Box>
 }

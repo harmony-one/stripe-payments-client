@@ -9,8 +9,8 @@ export const theme = {
     button: {
         primary: {
             extend: () => `
-            padding: 8px 24px;
-            border-radius: 6px;
+            padding: 10px 24px;
+            border-radius: 8px;
             background-color: black;
             text-align: center;
           `
