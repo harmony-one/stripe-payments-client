@@ -24,13 +24,13 @@ const wc = new WalletConnectConnector({
     },
   })
 // @ts-ignore
-wc.id = 'walletConnect_qr' // Hack to fix conflicting Wallet Connect instances
+// wc.id = 'walletConnect_qr' // Hack to fix conflicting Wallet Connect instances
 
 const connectors = [
-  // new MetaMaskConnector({ chains }),
+  new MetaMaskConnector({ chains }),
   wc,
-  ...web3ModalConnectors
-    .filter((connector) => ['walletConnect', 'injected'].includes(connector.id))
+  //...web3ModalConnectors
+    //.filter((connector) => ['walletConnect', 'injected'].includes(connector.id))
 ]
 
 export const wagmiClient = createClient({

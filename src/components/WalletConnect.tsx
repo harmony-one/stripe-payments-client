@@ -13,9 +13,10 @@ const payAmountOne = 50
 const receiverAddress = '0xac29041489210563f02f95ad85Df2e033131aE77'
 
 const ConnectorNameMap: Record<string, string> = {
-  Injected: 'Metamask',
-  Metamask: 'Metamask',
-  WalletConnect: 'QR Code'
+  injected: 'Metamask',
+  metamask: 'Metamask',
+  metaMask: 'Metamask',
+  walletConnect: 'Connect Wallet'
 }
 
 const wcConnector = new WalletConnect({
@@ -24,7 +25,7 @@ const wcConnector = new WalletConnect({
 
 const ConnectorItem = (props: any) => {
   const { isLoading, connector, pendingConnector, connect, walletConnectURI } = props
-  const name = ConnectorNameMap[connector.name] || connector.name
+  const name = ConnectorNameMap[connector.id] || connector.name
 
   let content = <Button
     primary
@@ -39,21 +40,13 @@ const ConnectorItem = (props: any) => {
       ' (connecting)'}
   </Button>
 
-  if(connector.id === 'injected') {
+  if(['injected', 'metaMask'].includes(connector.id)) {
     content = <Box align={'center'} justify={'center'}>
       <MetamaskLogo onClick={() => connect({ connector })} style={{ cursor: 'pointer' }} />
     </Box>
   }
-  else if (connector.id === 'walletConnect_qr' && walletConnectURI) {
-    content = <Box align={'center'} justify={'center'}>
-      <QRCode
-        size={96}
-        value={walletConnectURI}
-      />
-    </Box>
-  }
 
-  return <Box width={'120px'} gap={'16px'} margin={{ top: '16px' }}>
+  return <Box gap={'16px'} margin={{ top: '16px' }}>
     <Box align={'center'}>
       {name}{!connector.ready && ' (unsupported)'}
     </Box>
@@ -183,7 +176,7 @@ export const WalletConnecPage = (props: { projectId: string }) => {
     <Box direction={'row'} gap={'8px'}>
       <Box>
           <Box>
-              <Box direction={'row'} gap={'32px'} wrap={true}>
+              <Box direction={'row'} gap={'48px'} wrap={true}>
                 {window.location.href.includes('https://') &&
                     <Box gap={'16px'} margin={{ top: '16px' }}>
                         <Box align={'center'}>
@@ -195,8 +188,19 @@ export const WalletConnecPage = (props: { projectId: string }) => {
                         </Box>
                     </Box>
                 }
+                <Box gap={'16px'} margin={{ top: '16px' }}>
+                  <Box align={'center'}>
+                    QR Code
+                  </Box>
+                  <Box align={'center'} justify={'center'}>
+                    <QRCode
+                      size={96}
+                      value={walletConnectURI}
+                    />
+                  </Box>
+                </Box>
                 {connectors
-                  .filter(connector => !['walletConnect'].includes(connector.id))
+                  //.filter(connector => !['walletConnect'].includes(connector.id))
                   .map((connector, index) => {
                   const itemsProps = {
                     isLoading,
@@ -207,14 +211,14 @@ export const WalletConnecPage = (props: { projectId: string }) => {
                   }
                   return <ConnectorItem key={connector.id + index} {...itemsProps} />
                 })}
-                <Box gap={'16px'} margin={{ top: '16px' }}>
-                    <Box align={'center'}>
-                        Connect Wallet
-                    </Box>
-                    <Box>
-                        <Web3Button label="Connect Wallet" />
-                    </Box>
-                </Box>
+                {/*<Box gap={'16px'} margin={{ top: '16px' }}>*/}
+                {/*    <Box align={'center'}>*/}
+                {/*        Connect Wallet*/}
+                {/*    </Box>*/}
+                {/*    <Box>*/}
+                {/*        <Web3Button label="Connect Wallet" />*/}
+                {/*    </Box>*/}
+                {/*</Box>*/}
               </Box>
           </Box>
       </Box>
