@@ -90,7 +90,7 @@ export const ApplePay = () => {
         </ApplePayButton>
     }
 
-    return <Box width={'120px'}>
+    return <Box>
         {buttonContent}
     </Box>
 }
