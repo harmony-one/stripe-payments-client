@@ -13,8 +13,6 @@ export const theme = {
             border-radius: 8px;
             background-color: black;
             text-align: center;
-            background-color: #46a1ff;
-            color: white;
           `
         }
     }

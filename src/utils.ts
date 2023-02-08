@@ -17,20 +17,20 @@ const { provider } = configureChains(chains, [
 
 const web3ModalConnectors = modalConnectors({ appName: "web3Modal", chains })
 
-const wc = new WalletConnectConnector({
-    chains,
-    options: {
-      qrcode: true,
-    },
-  })
-// @ts-ignore
-// wc.id = 'walletConnect_qr' // Hack to fix conflicting Wallet Connect instances
+// const wcQr = new WalletConnectConnector({
+//     chains,
+//     options: {
+//       qrcode: true,
+//     },
+//   })
+// // @ts-ignore
+// wcQr.id = 'walletConnect_qr' // Hack to fix two conflicting Wallet Connect instances: old and new-style
 
 const connectors = [
-  new MetaMaskConnector({ chains }),
-  wc,
-  //...web3ModalConnectors
-    //.filter((connector) => ['walletConnect', 'injected'].includes(connector.id))
+  // new MetaMaskConnector({ chains }),
+  // wcQr,
+  ...web3ModalConnectors
+    .filter((connector) => ['walletConnect', 'injected'].includes(connector.id))
 ]
 
 export const wagmiClient = createClient({

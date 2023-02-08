@@ -19,7 +19,7 @@ const ConnectorNameMap: Record<string, string> = {
   walletConnect: 'Connect Wallet'
 }
 
-const wcConnector = new WalletConnect({
+const qrConnector = new WalletConnect({
   bridge: "https://bridge.walletconnect.org",
 });
 
@@ -56,7 +56,7 @@ const ConnectorItem = (props: any) => {
   </Box>
 }
 
-export const WalletConnecPage = (props: { projectId: string }) => {
+export const ConnectorsDemoPage = (props: { projectId: string }) => {
   const { isConnected, address, connector } = useAccount()
   const { connect, connectors, error, isLoading, pendingConnector } =
     useConnect()
@@ -65,42 +65,42 @@ export const WalletConnecPage = (props: { projectId: string }) => {
   const [walletConnectURI, setWalletConnectURI] = useState('')
   const [walletConnectAddress, setWalletConnectAddress] = useState('')
   const [isPageReady, setPageReady] = useState(false)
-  const [isWcConnected, setWcConnected] = useState(false)
+  const [isQrConnected, setQrConnected] = useState(false)
   const [isConfirming, setIsConfirming] = useState(false)
   const [txHash, setTxHash] = useState('')
 
   const createWalletConnectUri = async () => {
     try {
-      if(wcConnector.session.key) {
-        await wcConnector.killSession({ message: 'close session' })
+      if(qrConnector.session.key) {
+        await qrConnector.killSession({ message: 'close session' })
       }
-      await wcConnector.createSession()
-      // console.log('Wallet connect uri:', wcConnector.uri)
-      setWalletConnectURI(wcConnector.uri)
+      await qrConnector.createSession()
+      // console.log('Wallet connect uri:', qrConnector.uri)
+      setWalletConnectURI(qrConnector.uri)
     } catch (e) {
       console.error('Cannot create Wallet connect URI', (e as Error).message)
     }
   }
 
-  const onWalletConnectEvent = (error: any, payload: any) => {
+  const onQrWalletConnectEvent = (error: any, payload: any) => {
     const { accounts, chainId } = payload.params[0];
 
     if(accounts.length > 0) {
       setWalletConnectAddress(accounts[0])
       console.log('Set wallet connect success: ', accounts[0])
     }
-    setWcConnected(true)
+    setQrConnected(true)
   }
 
-  const onWalletDisconnect = () => {
-    setWcConnected(false)
+  const onQrWalletDisconnect = () => {
+    setQrConnected(false)
   }
 
   useEffect(() => {
     createWalletConnectUri()
     setTimeout(() => setPageReady(true), 1000)
-    wcConnector.on("connect", onWalletConnectEvent.bind(this));
-    wcConnector.on("disconnect", onWalletDisconnect.bind(this));
+    qrConnector.on("connect", onQrWalletConnectEvent.bind(this));
+    qrConnector.on("disconnect", onQrWalletDisconnect.bind(this));
   }, [])
 
   useEffect(() => {
@@ -113,10 +113,10 @@ export const WalletConnecPage = (props: { projectId: string }) => {
     if(!isConnected) {
       setTxHash('')
     }
-  }, [isConnected, isWcConnected])
+  }, [isConnected, isQrConnected])
 
   const sendTxHandler = () => {
-    if(isWcConnected) {
+    if(isQrConnected) {
       sendWalletConnectTransaction()
     } else if(isConnected) {
       sendTransaction()
@@ -158,7 +158,7 @@ export const WalletConnecPage = (props: { projectId: string }) => {
         value: web3.utils.toHex(amount),
       };
       setIsConfirming(true)
-      const tx = await wcConnector.sendTransaction(transactionParameters)
+      const tx = await qrConnector.sendTransaction(transactionParameters)
       console.log('tx:', tx)
       setTxHash(tx.transactionHash)
     } catch (e) {
@@ -190,6 +190,14 @@ export const WalletConnecPage = (props: { projectId: string }) => {
                 }
                 <Box gap={'16px'} margin={{ top: '16px' }}>
                   <Box align={'center'}>
+                    Connect Wallet
+                  </Box>
+                  <Box>
+                    <Web3Button label="Connect Wallet" />
+                  </Box>
+                </Box>
+                <Box gap={'16px'} margin={{ top: '16px' }}>
+                  <Box align={'center'}>
                     QR Code
                   </Box>
                   <Box align={'center'} justify={'center'}>
@@ -199,31 +207,23 @@ export const WalletConnecPage = (props: { projectId: string }) => {
                     />
                   </Box>
                 </Box>
-                {connectors
-                  //.filter(connector => !['walletConnect'].includes(connector.id))
-                  .map((connector, index) => {
-                  const itemsProps = {
-                    isLoading,
-                    connector,
-                    pendingConnector,
-                    connect,
-                    walletConnectURI,
-                  }
-                  return <ConnectorItem key={connector.id + index} {...itemsProps} />
-                })}
-                {/*<Box gap={'16px'} margin={{ top: '16px' }}>*/}
-                {/*    <Box align={'center'}>*/}
-                {/*        Connect Wallet*/}
-                {/*    </Box>*/}
-                {/*    <Box>*/}
-                {/*        <Web3Button label="Connect Wallet" />*/}
-                {/*    </Box>*/}
-                {/*</Box>*/}
+                {/*{connectors*/}
+                {/*  //.filter(connector => !['walletConnect'].includes(connector.id))*/}
+                {/*  .map((connector, index) => {*/}
+                {/*  const itemsProps = {*/}
+                {/*    isLoading,*/}
+                {/*    connector,*/}
+                {/*    pendingConnector,*/}
+                {/*    connect,*/}
+                {/*    walletConnectURI,*/}
+                {/*  }*/}
+                {/*  return <ConnectorItem key={connector.id + index} {...itemsProps} />*/}
+                {/*})}*/}
               </Box>
           </Box>
       </Box>
     </Box>
-    {(isConnected || isWcConnected) && <Box gap={'32px'} margin={{ top: '32px' }}>
+    {(isConnected || isQrConnected) && <Box gap={'32px'} margin={{ top: '64px' }}>
         <Box width={'200px'}>
             <Button primary disabled={isConfirming} onClick={sendTxHandler}>
               {isConfirming ? 'Confirming tx...' : `Pay (${payAmountOne} ONE)`}
@@ -235,12 +235,12 @@ export const WalletConnecPage = (props: { projectId: string }) => {
             </Box>
         }
     </Box>}
-    {(isConnected || isWcConnected) &&
+    {(isConnected || isQrConnected) &&
         <Box margin={{ top: '32px' }}>
             <Text onClick={async () => {
               disconnect()
-              if(isWcConnected) {
-                await wcConnector.killSession({ message: 'close session' })
+              if(isQrConnected) {
+                await qrConnector.killSession({ message: 'close session' })
               }
             }} style={{ textDecoration: 'underline', color: 'lightgrey', cursor: 'pointer' }}>Disconnect</Text>
         </Box>
