@@ -146,14 +146,14 @@ export const ConnectorsDemoPage = (props: { projectId: string }) => {
     }
   }
 
-  const ApplePayElement = isSafari ? <Box gap={'8px'} margin={{ bottom: '32px' }} width={'120px'}>
+  const ApplePayElement = <Box gap={'8px'} margin={{ bottom: '32px' }} width={'120px'}>
     <Box align={'center'}>
       {(isSafari) ? 'Apple Pay' : 'Google Pay'}
     </Box>
     <Box>
       <ApplePay />
     </Box>
-  </Box> : null
+  </Box>
 
   const ConnectWalletElement = <Box gap={'8px'} margin={{ bottom: '32px' }}>
     <Box align={'center'}>
