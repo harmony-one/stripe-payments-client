@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from 'react'
-import { Box } from 'grommet'
+import { Box, Button } from 'grommet'
 import { useStripe, useElements, PaymentRequestButtonElement } from '@stripe/react-stripe-js'
 import { createPaymentIntent } from '../api';
 import StatusMessages, { useMessages } from './StatusMessages';
+import styled from 'styled-components';
+
+const ApplePayButton = styled(Button)`
+    border-radius: 4px;
+    background-color: black;
+    color: white;
+    font-size: 19px;
+    padding: 10px 48px;
+`
 
 export const ApplePay = () => {
     const stripe = useStripe()
     const elements = useElements()
     const [messages, addMessage] = useMessages();
     const [paymentRequest, setPaymentRequest] = useState<any>(null)
+    const [canMakePayment, setCanMakePayment] = useState<any>(null)
 
     useEffect(() => {
         if(!stripe || !elements) {
@@ -28,6 +38,7 @@ export const ApplePay = () => {
 
         pr.canMakePayment().then((result) => {
             console.log('canMakePayment:', result)
+            setCanMakePayment(result)
             setPaymentRequest(pr)
         })
 
@@ -65,7 +76,25 @@ export const ApplePay = () => {
         return null
     }
 
+    const options = {
+        paymentRequest,
+        classes: {
+            base: 'test-stripe-base'
+        }
+    }
+
+    const onCustomButtonClick = () => {
+        paymentRequest.show()
+    }
+
+    let buttonContent = <PaymentRequestButtonElement options={options} />
+    if(canMakePayment && canMakePayment.applePay) {
+        buttonContent = <ApplePayButton onClick={onCustomButtonClick}>
+            
+        </ApplePayButton>
+    }
+
     return <Box width={'120px'}>
-        <PaymentRequestButtonElement options={{ paymentRequest }} />
+        {buttonContent}
     </Box>
 }
