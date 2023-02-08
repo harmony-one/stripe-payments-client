@@ -240,6 +240,10 @@ export const ConnectorsDemoPage = (props: { projectId: string }) => {
         }
       </Box>
     </SpaceWrapper>
-    <Web3Modal projectId={props.projectId} ethereumClient={ethereumClient} />
+    <Web3Modal
+      projectId={props.projectId}
+      ethereumClient={ethereumClient}
+      themeBackground={'themeColor'}
+    />
   </Box>
 }
