@@ -219,6 +219,7 @@ export const ConnectorsDemoPage = (props: { projectId: string }) => {
         <Select
           placeholder={'Select payment option'}
           style={{ width: '220px' }}
+          // defaultValue={PaymentMethod.pay}
           options={[
             { value: PaymentMethod.pay, label: isSafari ? 'Apple Pay' : 'Google Pay' },
             { value: PaymentMethod.qr, label: 'QR Code' },

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Box, Button } from 'grommet'
 import { useStripe, useElements, PaymentRequestButtonElement } from '@stripe/react-stripe-js'
 import { createPaymentIntent } from '../api';
-import StatusMessages, { useMessages } from './StatusMessages';
 import styled from 'styled-components';
 
 const ApplePayButton = styled(Button)`
@@ -11,12 +10,12 @@ const ApplePayButton = styled(Button)`
     color: white;
     font-size: 19px;
     padding: 10px 48px;
+    text-align: center;
 `
 
 export const ApplePay = () => {
     const stripe = useStripe()
     const elements = useElements()
-    const [messages, addMessage] = useMessages();
     const [paymentRequest, setPaymentRequest] = useState<any>(null)
     const [canMakePayment, setCanMakePayment] = useState<any>(null)
 
@@ -47,7 +46,6 @@ export const ApplePay = () => {
             try {
                 clientSecret = await createPaymentIntent('card', 'usd')
             } catch (e) {
-                addMessage((e as Error).message);
                 return
             }
 
@@ -58,7 +56,6 @@ export const ApplePay = () => {
             })
 
             if(stripeError) {
-                addMessage(stripeError.message as string);
                 e.complete('fail');
                 return;
             }
@@ -68,9 +65,8 @@ export const ApplePay = () => {
             if(paymentIntent.status === 'requires_action') {
                 stripe.confirmCardPayment(clientSecret)
             }
-            addMessage(`Payment ${paymentIntent.status}: ${paymentIntent.id}`);
         })
-    }, [stripe, elements, addMessage])
+    }, [stripe, elements])
 
     if(!paymentRequest) {
         return null
