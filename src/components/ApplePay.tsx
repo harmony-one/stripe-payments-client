@@ -87,7 +87,7 @@ export const ApplePay = () => {
         paymentRequest.show()
     }
 
-    let buttonContent = <PaymentRequestButtonElement options={options} />
+    let buttonContent = canMakePayment ? <PaymentRequestButtonElement options={options} /> : null
     if(canMakePayment && canMakePayment.applePay) {
         buttonContent = <ApplePayButton onClick={onCustomButtonClick}>
             
