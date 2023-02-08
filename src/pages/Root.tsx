@@ -3,7 +3,6 @@ import {Box} from "grommet";
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import config from '../config'
-import { ApplePay } from '../components/ApplePay';
 import { ConnectorsDemoPage } from '../components/ConnectorsDemoPage';
 
 const { walletConnect, stripe } = config

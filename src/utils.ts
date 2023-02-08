@@ -1,7 +1,7 @@
 import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3modal/ethereum'
-import { configureChains, createClient, WagmiConfig } from 'wagmi'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+import { configureChains, createClient } from 'wagmi'
+// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+// import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import config from './config'
 
 const { walletConnect: { projectId }, chainParams } = config

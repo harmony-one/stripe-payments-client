@@ -3,13 +3,27 @@ import { Box, Button } from 'grommet'
 import { useStripe, useElements, PaymentRequestButtonElement } from '@stripe/react-stripe-js'
 import { createPaymentIntent } from '../api';
 import styled from 'styled-components';
+import {ReactComponent as GooglePayLogo} from '../assets/google_pay.svg';
 
 const ApplePayButton = styled(Button)`
+    width: 120px;
     border-radius: 4px;
     background-color: black;
+    text-align: center;
     color: white;
     font-size: 19px;
     padding: 10px 48px;
+    text-align: center;
+`
+
+const GooglePayButton = styled(Button)`
+    width: 120px;
+    display: flex;
+    text-align: center;
+    border-radius: 100vh;
+    background-color: black;
+    color: white;
+    padding: 10px 32px;
     text-align: center;
 `
 
@@ -72,22 +86,22 @@ export const ApplePay = () => {
         return null
     }
 
-    const options = {
-        paymentRequest,
-        classes: {
-            base: 'test-stripe-base'
-        }
-    }
-
     const onCustomButtonClick = () => {
         paymentRequest.show()
     }
 
-    let buttonContent = canMakePayment ? <PaymentRequestButtonElement options={options} /> : null
-    if(canMakePayment && canMakePayment.applePay) {
-        buttonContent = <ApplePayButton onClick={onCustomButtonClick}>
-            
-        </ApplePayButton>
+    let buttonContent = <ApplePayButton disabled>N/A</ApplePayButton>
+    if(canMakePayment) {
+        if(canMakePayment.applePay) {
+            buttonContent = <ApplePayButton onClick={onCustomButtonClick}></ApplePayButton>
+        } else if(canMakePayment.googlePay) {
+            buttonContent = <GooglePayButton onClick={onCustomButtonClick}>
+                <GooglePayLogo width={'48px'} />
+            </GooglePayButton>
+        }
+        // else {
+        //     buttonContent = <PaymentRequestButtonElement options={{ paymentRequest }} />
+        // }
     }
 
     return <Box>

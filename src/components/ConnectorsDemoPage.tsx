@@ -2,13 +2,13 @@ import { Web3Button, Web3Modal } from '@web3modal/react'
 import { Box, Button, Text } from 'grommet'
 import React, { useState, useEffect } from 'react'
 import QRCode from "react-qr-code";
-import { useAccount, useConnect, useDisconnect, Connector } from 'wagmi'
+import { useAccount, useDisconnect } from 'wagmi'
 import Web3 from 'web3'
-import { Select, Space } from 'antd';
+import { Select } from 'antd';
 import WalletConnect from "@walletconnect/browser";
 import { ethereumClient } from '../utils'
 import { ApplePay } from './ApplePay'
-import {ReactComponent as MetamaskLogo} from '../assets/metamask-fox.svg';
+// import {ReactComponent as MetamaskLogo} from '../assets/metamask-fox.svg';
 import styled from 'styled-components';
 
 const payAmountOne = 50
@@ -33,10 +33,55 @@ const SpaceWrapper = styled(Box)`
   border-radius: 16px;
 `
 
+const ApplePayContainer = (props: { showHeader?: boolean }) => {
+  const { showHeader = true } = props
+
+  return <Box gap={'8px'}>
+    {showHeader &&
+        <Box align={'center'}>
+          {(isSafari) ? 'Apple Pay' : 'Google Pay'}
+        </Box>
+    }
+    <Box>
+      <ApplePay />
+    </Box>
+  </Box>
+}
+
+const WalletConnectContainer = (props: { showHeader?: boolean }) => {
+  const { showHeader = true } = props
+
+  return <Box gap={'8px'}>
+    {showHeader &&
+        <Box align={'center'}>
+            Connect Wallet
+        </Box>
+    }
+    <Box>
+      <Web3Button label="Connect Wallet" />
+    </Box>
+  </Box>
+}
+
+const QRCodeContainer = (props: { showHeader?: boolean, uri: string }) => {
+  const { showHeader = true, uri } = props
+  return <Box gap={'8px'}>
+    {showHeader &&
+        <Box align={'center'}>
+            QR Code
+        </Box>
+    }
+    <Box align={'center'} justify={'center'}>
+      <QRCode
+        size={96}
+        value={uri}
+      />
+    </Box>
+  </Box>
+}
+
 export const ConnectorsDemoPage = (props: { projectId: string }) => {
   const { isConnected, address, connector } = useAccount()
-  const { connect, connectors, error, isLoading, pendingConnector } =
-    useConnect()
   const { disconnect } = useDisconnect()
 
   const [walletConnectURI, setWalletConnectURI] = useState('')
@@ -61,7 +106,7 @@ export const ConnectorsDemoPage = (props: { projectId: string }) => {
   }
 
   const onQrWalletConnectEvent = (error: any, payload: any) => {
-    const { accounts, chainId } = payload.params[0];
+    const { accounts } = payload.params[0];
 
     if(accounts.length > 0) {
       setWalletConnectAddress(accounts[0])
@@ -146,47 +191,15 @@ export const ConnectorsDemoPage = (props: { projectId: string }) => {
     }
   }
 
-  const ApplePayElement = <Box gap={'8px'} margin={{ bottom: '32px' }} width={'120px'}>
-    <Box align={'center'}>
-      {(isSafari) ? 'Apple Pay' : 'Google Pay'}
-    </Box>
-    <Box>
-      <ApplePay />
-    </Box>
-  </Box>
-
-  const ConnectWalletElement = <Box gap={'8px'} margin={{ bottom: '32px' }}>
-    <Box align={'center'}>
-      Connect Wallet
-    </Box>
-    <Box>
-      <Web3Button label="Connect Wallet" />
-    </Box>
-  </Box>
-
-  const QrCodeElement = <Box gap={'8px'} margin={{ bottom: '32px' }}>
-    <Box align={'center'}>
-      QR Code
-    </Box>
-    <Box align={'center'} justify={'center'}>
-      <QRCode
-        size={96}
-        value={walletConnectURI}
-      />
-    </Box>
-  </Box>
-
   return <Box>
-    <SpaceWrapper>
+    <Box>
       <Box direction={'row'} gap={'8px'}>
         <Box>
           <Box>
-            <Box direction={'row'} gap={'48px'} wrap={true}>
-              {window.location.href.includes('https://') &&
-                ApplePayElement
-              }
-              {ConnectWalletElement}
-              {QrCodeElement}
+            <Box direction={'row'} wrap={true} style={{ gap: '2em' }}>
+              <ApplePayContainer />
+              <WalletConnectContainer />
+              <QRCodeContainer uri={walletConnectURI} />
             </Box>
           </Box>
         </Box>
@@ -213,13 +226,11 @@ export const ConnectorsDemoPage = (props: { projectId: string }) => {
               }} style={{ textDecoration: 'underline', color: 'lightgrey', cursor: 'pointer' }}>Disconnect</Text>
           </Box>
       }
-    </SpaceWrapper>
-    <SpaceWrapper margin={{ top: '32px' }}>
+    </Box>
+    <SpaceWrapper margin={{ top: '32px' }} width={'252px'}>
       <Box>
         <Select
           placeholder={'Select payment option'}
-          style={{ width: '220px' }}
-          // defaultValue={PaymentMethod.pay}
           options={[
             { value: PaymentMethod.pay, label: isSafari ? 'Apple Pay' : 'Google Pay' },
             { value: PaymentMethod.qr, label: 'QR Code' },
@@ -228,15 +239,15 @@ export const ConnectorsDemoPage = (props: { projectId: string }) => {
           onChange={(value: PaymentMethod) => setSelectedMethod(value)}
         />
       </Box>
-      <Box width={'180px'} margin={{ top: '32px' }}>
+      <Box margin={{ top: '16px', bottom: '8px' }} align={'center'}>
         {selectedMethod === PaymentMethod.pay &&
-          ApplePayElement
-        }
-        {selectedMethod === PaymentMethod.qr &&
-          QrCodeElement
+            <ApplePayContainer showHeader={false} />
         }
         {selectedMethod === PaymentMethod.walletConnect &&
-          ConnectWalletElement
+          <WalletConnectContainer showHeader={false} />
+        }
+        {selectedMethod === PaymentMethod.qr &&
+            <QRCodeContainer showHeader={false} uri={walletConnectURI} />
         }
       </Box>
     </SpaceWrapper>
