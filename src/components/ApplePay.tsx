@@ -4,8 +4,11 @@ import { useStripe, useElements, PaymentRequestButtonElement } from '@stripe/rea
 import { createPaymentIntent } from '../api';
 import styled from 'styled-components';
 import {ReactComponent as GooglePayLogo} from '../assets/google_pay.svg';
+import {ReactComponent as LinkLogo} from '../assets/link.svg';
 
 const ApplePayButton = styled(Button)`
+    display: flex;
+    justify-content: center;
     width: 120px;
     border-radius: 4px;
     background-color: black;
@@ -25,6 +28,24 @@ const GooglePayButton = styled(Button)`
     color: white;
     padding: 10px 32px;
     text-align: center;
+`
+
+const LinkButton = styled(Button)`
+    width: 120px;
+    height: 40px;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+    border-radius: 6px;
+    background-color: #009788;
+    color: white;
+    padding: 10px 32px;
+    text-align: center;
+    
+    svg {
+        padding-top: 2px;
+    }
 `
 
 export const ApplePay = () => {
@@ -50,7 +71,7 @@ export const ApplePay = () => {
         })
 
         pr.canMakePayment().then((result) => {
-            console.log('canMakePayment:', result)
+            console.log('Stripe canMakePayment:', result)
             setCanMakePayment(result)
             setPaymentRequest(pr)
         })
@@ -92,12 +113,17 @@ export const ApplePay = () => {
 
     let buttonContent = <ApplePayButton disabled>N/A</ApplePayButton>
     if(canMakePayment) {
-        if(canMakePayment.applePay) {
+        const { applePay, googlePay, link } = canMakePayment
+        if(applePay) {
             buttonContent = <ApplePayButton onClick={onCustomButtonClick}></ApplePayButton>
-        } else if(canMakePayment.googlePay) {
+        } else if(googlePay) {
             buttonContent = <GooglePayButton onClick={onCustomButtonClick}>
                 <GooglePayLogo width={'48px'} />
             </GooglePayButton>
+        } else if(link) {
+            <LinkButton onClick={onCustomButtonClick}>
+                <LinkLogo width={'32px'} />
+            </LinkButton>
         }
         // else {
         //     buttonContent = <PaymentRequestButtonElement options={{ paymentRequest }} />
